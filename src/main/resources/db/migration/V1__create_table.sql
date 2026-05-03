@@ -26,6 +26,7 @@ CREATE TABLE livro (
     ano_publicacao INTEGER,
     serie_recomendada VARCHAR(100),
     total_paginas INTEGER NOT NULL,
+    -- Há um motivo pelo ISBN ter sido setado com 20 caracteres.
     isbn VARCHAR(20),
     autor_id BIGINT NOT NULL REFERENCES autor(id),
     categoria_id BIGINT NOT NULL REFERENCES categoria(id)
