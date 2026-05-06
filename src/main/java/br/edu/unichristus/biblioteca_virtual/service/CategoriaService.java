@@ -20,11 +20,15 @@ public class CategoriaService {
         return repository.findAll();
     }
 
+    //Busca pelo nome.
+    public List<Categoria> searchByNome(String nome) {
+        return repository.findByNomeContainingIgnoreCase(nome);
+    }
     //Realiza uma busca por ID das categorias.
+
     public Optional<Categoria> findById(Long id) {
         return repository.findById(id);
     }
-
     //Cria uma categoria.
     public Categoria create(Categoria categoria) {
         return repository.save(categoria);
@@ -42,7 +46,11 @@ public class CategoriaService {
     }
 
     //Deleta uma categoria.
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public boolean delete(Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

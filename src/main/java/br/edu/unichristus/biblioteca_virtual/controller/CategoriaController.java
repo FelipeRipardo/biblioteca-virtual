@@ -40,6 +40,13 @@ public class CategoriaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/buscar")
+    @Operation(summary = "Busca categorias pelo nome (parcial ou completo.")
+    @ApiResponse(responseCode = "200", description = "Lista de categorias filtrada retornada com sucesso.")
+    public ResponseEntity<List<Categoria>> searchByNome(@RequestParam String nome) {
+        return ResponseEntity.ok(service.searchByNome(nome));
+    }
+
     @PostMapping
     @Operation(summary = "Cadastra uma nova categoria no sistema.")
     @ApiResponse(responseCode = "201", description = "Categoria criada com sucesso!")
@@ -65,10 +72,13 @@ public class CategoriaController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Remove uma categoria pelo ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Categoria removida com sucesso.")
+            @ApiResponse(responseCode = "204", description = "Categoria removida com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Categoria não encontrada para remoção.")
     })
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.noContent().build();
+        if (service.delete(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }
