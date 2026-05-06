@@ -22,6 +22,14 @@ public class AutorService {
         return repository.findById(id);
     }
 
+    public List<Autor> searchByNome(String nome) {
+        return repository.findByNomeContainingIgnoreCase(nome);
+    }
+
+    public List<Autor> searchByNacionalidade(String nacionalidade) {
+        return repository.findByNacionalidadeContainingIgnoreCase(nacionalidade);
+    }
+
     public Autor create(Autor autor) {
         return repository.save(autor);
     }

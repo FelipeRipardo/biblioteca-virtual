@@ -40,6 +40,20 @@ public class AutorController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/buscar-por-nome")
+    @Operation(summary = "Busca autores pelo nome (parcial ou completo).")
+    @ApiResponse(responseCode = "200", description = "Lista de autores filtrada retornada com sucesso.")
+    public ResponseEntity<List<Autor>> searchByNome(@RequestParam String nome) {
+        return ResponseEntity.ok(service.searchByNome(nome));
+    }
+
+    @GetMapping("/buscar-por-nacionalidade")
+    @Operation(summary = "Busca autores pela nacionalidade.")
+    @ApiResponse(responseCode = "200", description = "Lista de autores filtrada retornada com sucesso.")
+    public ResponseEntity<List<Autor>> searchByNacionalidade(@RequestParam String nacionalidade) {
+        return ResponseEntity.ok(service.searchByNacionalidade(nacionalidade));
+    }
+
     @PostMapping
     @Operation(summary = "Cadastra um novo autor no sistema.")
     @ApiResponse(responseCode = "201", description = "Autor criado com sucesso!")
