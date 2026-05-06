@@ -17,13 +17,13 @@ public class SessaoLeitura {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "token_dispositivo", nullable = false, unique = true)
     private UUID tokenDispositivo;
 
     @Column(name = "ultima_pagina_lida", nullable = false)
-    private int ultimaPaginaLida = 0;
+    private Integer ultimaPaginaLida = 0;
 
     @Column(name = "data_inicio")
     private LocalDateTime dataInicio;

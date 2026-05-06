@@ -18,13 +18,13 @@ public class Avaliacao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "apelido_leitor", nullable = false, length = 100)
     private String apelidoLeitor;
 
     @Column(nullable = false)
-    private int nota;
+    private Integer nota;
 
     @Column(columnDefinition = "TEXT")
     private String comentario;

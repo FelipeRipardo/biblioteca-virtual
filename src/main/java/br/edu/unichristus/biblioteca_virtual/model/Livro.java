@@ -14,7 +14,7 @@ public class Livro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, length = 200)
     private String titulo;
@@ -23,13 +23,13 @@ public class Livro {
     private String resumo;
 
     @Column(name = "ano_publicacao")
-    private int anoPublicacao;
+    private Integer anoPublicacao;
 
     @Column(name = "serie_recomendada", length = 200)
     private String serieRecomendada;
 
     @Column(name = "total_paginas", nullable = false)
-    private int totalPaginas;
+    private Integer totalPaginas;
 
     @Column(length = 20)
     private String isbn;
