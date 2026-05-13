@@ -20,7 +20,7 @@ public class SessaoLeitura {
     private Long id;
 
     @Column(name = "token_dispositivo", nullable = false, unique = true)
-    private UUID tokenDispositivo;
+    private String tokenDispositivo;
 
     @Column(name = "ultima_pagina_lida", nullable = false)
     private Integer ultimaPaginaLida = 0;
@@ -36,13 +36,19 @@ public class SessaoLeitura {
     @JoinColumn(name = "livro_id", nullable = false)
     private Livro livro;
 
+
+    //LifeCycle Callbacks
+
     //Gera o token e a data de início na primeira vez que o aluno acessar o livro.
     @PrePersist
     protected void onCreate(){
         this.dataInicio = LocalDateTime.now();
         if (this.tokenDispositivo == null){
-            this.tokenDispositivo = UUID.randomUUID();
+            this.tokenDispositivo = UUID.randomUUID().toString();
         }
+        this.ultimaPaginaLida = 1; // Sempre começa na página 1
+        this.dataInicio = LocalDateTime.now();
+        this.dataUltimoAcesso = this.dataInicio;
     }
 
     //Atualiza a data automaticamente toda vez que ele ler uma página nova e salva.

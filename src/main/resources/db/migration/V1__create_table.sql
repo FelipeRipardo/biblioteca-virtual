@@ -45,7 +45,7 @@ CREATE TABLE avaliacao (
 -- 5 - Tabela Sessão de Leitura (A funcionalidade extra)
 CREATE TABLE sessao_leitura (
     id BIGSERIAL PRIMARY KEY,
-    token_dispositivo UUID NOT NULL UNIQUE,
+    token_dispositivo VARCHAR(255) NOT NULL UNIQUE,
     ultima_pagina_lida INTEGER NOT NULL DEFAULT 0,
     data_inicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     data_ultimo_acesso TIMESTAMP,
