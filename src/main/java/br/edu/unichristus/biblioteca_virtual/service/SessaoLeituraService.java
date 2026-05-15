@@ -1,7 +1,14 @@
 package br.edu.unichristus.biblioteca_virtual.service;
 
+import br.edu.unichristus.biblioteca_virtual.dto.AutorResponseDTO;
+import br.edu.unichristus.biblioteca_virtual.dto.CategoriaResponseDTO;
+import br.edu.unichristus.biblioteca_virtual.dto.LivroResponseDTO;
+import br.edu.unichristus.biblioteca_virtual.dto.SessaoLeituraRequestDTO;
+import br.edu.unichristus.biblioteca_virtual.dto.SessaoLeituraResponseDTO;
 import br.edu.unichristus.biblioteca_virtual.exception.ResourceNotFoundException;
+import br.edu.unichristus.biblioteca_virtual.model.Livro;
 import br.edu.unichristus.biblioteca_virtual.model.SessaoLeitura;
+import br.edu.unichristus.biblioteca_virtual.repository.LivroRepository;
 import br.edu.unichristus.biblioteca_virtual.repository.SessaoLeituraRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,22 +17,76 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SessaoLeituraService {
 
+    //A injeção de dependência é feita de forma automática pelo @RequiredArgsConstructor
     private final SessaoLeituraRepository repository;
+    private final LivroRepository livroRepository;
 
-    public SessaoLeitura create(SessaoLeitura sessao) {
-        return repository.save(sessao);
+    //Cria (inicia) uma nova sessão de leitura.
+    public SessaoLeituraResponseDTO create(SessaoLeituraRequestDTO requestDTO) {
+        Livro livro = livroRepository.findById(requestDTO.getLivroId())
+                .orElseThrow(() -> new ResourceNotFoundException("Livro não encontrado para o ID: " + requestDTO.getLivroId() + "."));
+
+        SessaoLeitura sessao = new SessaoLeitura();
+        sessao.setLivro(livro);
+        //O token, data e pagina 1 serão gerados automaticamente pelo @PrePersist no Model
+
+        SessaoLeitura savedSessao = repository.save(sessao);
+        return convertToResponseDTO(savedSessao);
     }
 
-    public SessaoLeitura findByToken(String token) {
-        return repository.findByTokenDispositivo(token)
+    //Busca a sessão pelo token invisível do dispositivo.
+    public SessaoLeituraResponseDTO findByToken(String token) {
+        SessaoLeitura sessao = repository.findByTokenDispositivo(token)
                 .orElseThrow(() -> new ResourceNotFoundException("Sessão de leitura não encontrada para o token informado."));
+        return convertToResponseDTO(sessao);
     }
 
-    public SessaoLeitura updatePage(String token, Integer novaPagina) {
-        SessaoLeitura existingSessao = findByToken(token);
+    //Atualiza a página lida (Virar a página).
+    public SessaoLeituraResponseDTO updatePage(String token, Integer novaPagina) {
+        SessaoLeitura existingSessao = repository.findByTokenDispositivo(token)
+                .orElseThrow(() -> new ResourceNotFoundException("Sessão de leitura não encontrada para o token informado."));
 
         existingSessao.setUltimaPaginaLida(novaPagina);
 
-        return repository.save(existingSessao);
+        SessaoLeitura updatedSessao = repository.save(existingSessao);
+        return convertToResponseDTO(updatedSessao);
+    }
+
+    //Método auxiliar privado para converter Entidade em DTO de saída.
+    private SessaoLeituraResponseDTO convertToResponseDTO(SessaoLeitura sessao) {
+        SessaoLeituraResponseDTO responseDTO = new SessaoLeituraResponseDTO();
+        responseDTO.setTokenDispositivo(sessao.getTokenDispositivo());
+        responseDTO.setUltimaPaginaLida(sessao.getUltimaPaginaLida());
+        responseDTO.setDataInicio(sessao.getDataInicio());
+        responseDTO.setUltimoAcesso(sessao.getUltimoAcesso());
+
+        if (sessao.getLivro() != null) {
+            LivroResponseDTO livroDTO = new LivroResponseDTO();
+            livroDTO.setId(sessao.getLivro().getId());
+            livroDTO.setTitulo(sessao.getLivro().getTitulo());
+            livroDTO.setResumo(sessao.getLivro().getResumo());
+            livroDTO.setAnoPublicacao(sessao.getLivro().getAnoPublicacao());
+            livroDTO.setTotalPaginas(sessao.getLivro().getTotalPaginas());
+            livroDTO.setIsbn(sessao.getLivro().getIsbn());
+            livroDTO.setSerieRecomendada(sessao.getLivro().getSerieRecomendada());
+
+            if (sessao.getLivro().getAutor() != null) {
+                AutorResponseDTO autorDTO = new AutorResponseDTO();
+                autorDTO.setId(sessao.getLivro().getAutor().getId());
+                autorDTO.setNome(sessao.getLivro().getAutor().getNome());
+                livroDTO.setAutor(autorDTO);
+            }
+
+            if (sessao.getLivro().getCategoria() != null) {
+                CategoriaResponseDTO categoriaDTO = new CategoriaResponseDTO();
+                categoriaDTO.setId(sessao.getLivro().getCategoria().getId());
+                categoriaDTO.setNome(sessao.getLivro().getCategoria().getNome());
+                livroDTO.setCategoria(categoriaDTO);
+            }
+
+            responseDTO.setLivro(livroDTO);
+        }
+
+        return responseDTO;
     }
 }
