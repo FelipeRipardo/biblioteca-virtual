@@ -1,18 +1,18 @@
 package br.edu.unichristus.biblioteca_virtual.service;
 
+import br.edu.unichristus.biblioteca_virtual.exception.ResourceNotFoundException;
 import br.edu.unichristus.biblioteca_virtual.model.Categoria;
 import br.edu.unichristus.biblioteca_virtual.repository.CategoriaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CategoriaService {
 
-    //A injeção de dependência é feita de forma automática pelo @RequiredArgsContructor
+    //A injeção de dependência é feita de forma automática pelo @RequiredArgsConstructor
     private final CategoriaRepository repository;
 
     //Lista todas as categorias
@@ -24,11 +24,13 @@ public class CategoriaService {
     public List<Categoria> searchByNome(String nome) {
         return repository.findByNomeContainingIgnoreCase(nome);
     }
-    //Realiza uma busca por ID das categorias.
 
-    public Optional<Categoria> findById(Long id) {
-        return repository.findById(id);
+    //Realiza uma busca por ID das categorias.
+    public Categoria findById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada para o ID: " + id));
     }
+
     //Cria uma categoria.
     public Categoria create(Categoria categoria) {
         return repository.save(categoria);
@@ -36,21 +38,21 @@ public class CategoriaService {
 
     //Atualiza uma categoria.
     public Categoria update(Long id, Categoria updatedCategoria) {
-        return repository.findById(id).map(existingCategoria -> {
-            existingCategoria.setNome(updatedCategoria.getNome());
-            existingCategoria.setDescricao(updatedCategoria.getDescricao());
-            existingCategoria.setAreaConhecimento(updatedCategoria.getAreaConhecimento());
-            existingCategoria.setDepartamentoResponsavel(updatedCategoria.getDepartamentoResponsavel());
-            return repository.save(existingCategoria);
-        }).orElse(null); //Retorna null se tentar atualizar um ID de Categoria que não existe.
+        // Usa o findById que já valida se o ID existe e dispara o erro 404 se não achar
+        Categoria existingCategoria = findById(id);
+
+        existingCategoria.setNome(updatedCategoria.getNome());
+        existingCategoria.setDescricao(updatedCategoria.getDescricao());
+        existingCategoria.setAreaConhecimento(updatedCategoria.getAreaConhecimento());
+        existingCategoria.setDepartamentoResponsavel(updatedCategoria.getDepartamentoResponsavel());
+
+        return repository.save(existingCategoria);
     }
 
     //Deleta uma categoria.
-    public boolean delete(Long id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void delete(Long id) {
+        // Usa o findById para garantir que existe antes de tentar deletar
+        Categoria existingCategoria = findById(id);
+        repository.delete(existingCategoria);
     }
 }

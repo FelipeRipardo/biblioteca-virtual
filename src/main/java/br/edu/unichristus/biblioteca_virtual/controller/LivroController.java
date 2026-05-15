@@ -35,9 +35,7 @@ public class LivroController {
             @ApiResponse(responseCode = "404", description = "Livro não encontrado.")
     })
     public ResponseEntity<Livro> findById(@PathVariable Long id) {
-        return service.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @GetMapping("/buscar-por-titulo")
@@ -58,8 +56,7 @@ public class LivroController {
     @Operation(summary = "Cadastra um novo livro no sistema.")
     @ApiResponse(responseCode = "201", description = "Livro criado com sucesso!")
     public ResponseEntity<Livro> create(@RequestBody Livro livro) {
-        Livro newLivro = service.create(livro);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newLivro);
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(livro));
     }
 
     @PutMapping("/{id}")
@@ -69,23 +66,16 @@ public class LivroController {
             @ApiResponse(responseCode = "404", description = "Livro não encontrado para atualização.")
     })
     public ResponseEntity<Livro> update(@PathVariable Long id, @RequestBody Livro livro) {
-        Livro updatedLivro = service.update(id, livro);
-        if (updatedLivro == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updatedLivro);
+        return ResponseEntity.ok(service.update(id, livro));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Remove um livro pelo ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Livro removido com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Livro não encontrado para remoção.")
+            @ApiResponse(responseCode = "204", description = "Livro removido com sucesso.")
     })
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -35,9 +35,8 @@ public class CategoriaController {
             @ApiResponse(responseCode = "404", description = "Categoria não encontrada.")
     })
     public ResponseEntity<Categoria> findById(@PathVariable Long id) {
-        return service.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        // A tratativa do 404 agora é automática via Exception Handler
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @GetMapping("/buscar")
@@ -62,10 +61,8 @@ public class CategoriaController {
             @ApiResponse(responseCode = "404", description = "Categoria não encontrada para atualização.")
     })
     public ResponseEntity<Categoria> update(@PathVariable Long id, @RequestBody Categoria categoria) {
+        // Se o ID não existir, o Service vai disparar a exceção antes de chegar na linha de baixo
         Categoria updatedCategoria = service.update(id, categoria);
-        if (updatedCategoria == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(updatedCategoria);
     }
 
@@ -76,9 +73,7 @@ public class CategoriaController {
             @ApiResponse(responseCode = "404", description = "Categoria não encontrada para remoção.")
     })
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (service.delete(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
