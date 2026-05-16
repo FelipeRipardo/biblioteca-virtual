@@ -118,26 +118,14 @@ public class LivroService {
         responseDTO.setIsbn(livro.getIsbn());
         responseDTO.setSerieRecomendada(livro.getSerieRecomendada());
 
-        //Mapeando o Autor para o seu respectivo ResponseDTO
         if (livro.getAutor() != null) {
-            AutorResponseDTO autorDTO = new AutorResponseDTO();
-            autorDTO.setId(livro.getAutor().getId());
-            autorDTO.setNome(livro.getAutor().getNome());
-            autorDTO.setBiografia(livro.getAutor().getBiografia());
-            autorDTO.setNacionalidade(livro.getAutor().getNacionalidade());
-            autorDTO.setDataNascimento(livro.getAutor().getDataNascimento());
-            responseDTO.setAutor(autorDTO);
+            responseDTO.setNomeAutor(livro.getAutor().getNome());
         }
 
-        //Mapeando a Categoria para o seu respectivo ResponseDTO
         if (livro.getCategoria() != null) {
-            CategoriaResponseDTO categoriaDTO = new CategoriaResponseDTO();
-            categoriaDTO.setId(livro.getCategoria().getId());
-            categoriaDTO.setNome(livro.getCategoria().getNome());
-            categoriaDTO.setDescricao(livro.getCategoria().getDescricao());
-            categoriaDTO.setAreaConhecimento(livro.getCategoria().getAreaConhecimento());
-            categoriaDTO.setDepartamentoResponsavel(livro.getCategoria().getDepartamentoResponsavel());
-            responseDTO.setCategoria(categoriaDTO);
+            responseDTO.setNomeCategoria(livro.getCategoria().getNome());
+            responseDTO.setAreaConhecimentoCategoria(livro.getCategoria().getAreaConhecimento());
+            responseDTO.setDepartamentoResponsavelCategoria(livro.getCategoria().getDepartamentoResponsavel());
         }
 
         return responseDTO;

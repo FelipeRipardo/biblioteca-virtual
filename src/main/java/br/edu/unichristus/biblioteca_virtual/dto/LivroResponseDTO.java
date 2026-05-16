@@ -13,8 +13,10 @@ public class LivroResponseDTO {
     private String isbn;
     private String serieRecomendada;
 
-    // Devolvemos os objetos limpos, sem expor a estrutura interna do banco
-    private AutorResponseDTO autor;
-    private CategoriaResponseDTO categoria;
+    private String nomeAutor;
+
+    private String nomeCategoria;
+    private String areaConhecimentoCategoria;
+    private String departamentoResponsavelCategoria;
 
 }

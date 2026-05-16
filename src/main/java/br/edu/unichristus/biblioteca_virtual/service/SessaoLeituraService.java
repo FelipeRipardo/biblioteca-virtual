@@ -58,7 +58,7 @@ public class SessaoLeituraService {
         responseDTO.setTokenDispositivo(sessao.getTokenDispositivo());
         responseDTO.setUltimaPaginaLida(sessao.getUltimaPaginaLida());
         responseDTO.setDataInicio(sessao.getDataInicio());
-        responseDTO.setUltimoAcesso(sessao.getUltimoAcesso());
+        responseDTO.setUltimoAcesso(sessao.getDataUltimoAcesso());
 
         if (sessao.getLivro() != null) {
             LivroResponseDTO livroDTO = new LivroResponseDTO();
@@ -71,17 +71,13 @@ public class SessaoLeituraService {
             livroDTO.setSerieRecomendada(sessao.getLivro().getSerieRecomendada());
 
             if (sessao.getLivro().getAutor() != null) {
-                AutorResponseDTO autorDTO = new AutorResponseDTO();
-                autorDTO.setId(sessao.getLivro().getAutor().getId());
-                autorDTO.setNome(sessao.getLivro().getAutor().getNome());
-                livroDTO.setAutor(autorDTO);
+                livroDTO.setNomeAutor(sessao.getLivro().getAutor().getNome());
             }
 
             if (sessao.getLivro().getCategoria() != null) {
-                CategoriaResponseDTO categoriaDTO = new CategoriaResponseDTO();
-                categoriaDTO.setId(sessao.getLivro().getCategoria().getId());
-                categoriaDTO.setNome(sessao.getLivro().getCategoria().getNome());
-                livroDTO.setCategoria(categoriaDTO);
+                livroDTO.setNomeCategoria(sessao.getLivro().getCategoria().getNome());
+                livroDTO.setAreaConhecimentoCategoria(sessao.getLivro().getCategoria().getAreaConhecimento());
+                livroDTO.setDepartamentoResponsavelCategoria(sessao.getLivro().getCategoria().getDepartamentoResponsavel());
             }
 
             responseDTO.setLivro(livroDTO);

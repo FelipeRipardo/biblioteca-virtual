@@ -99,7 +99,6 @@ public class AvaliacaoService {
         responseDTO.setNota(avaliacao.getNota());
         responseDTO.setComentario(avaliacao.getComentario());
 
-        //Mapeando o Livro (e seus relacionamentos) para não devolver Entidades vazando dados
         if (avaliacao.getLivro() != null) {
             LivroResponseDTO livroDTO = new LivroResponseDTO();
             livroDTO.setId(avaliacao.getLivro().getId());
@@ -111,17 +110,13 @@ public class AvaliacaoService {
             livroDTO.setSerieRecomendada(avaliacao.getLivro().getSerieRecomendada());
 
             if (avaliacao.getLivro().getAutor() != null) {
-                AutorResponseDTO autorDTO = new AutorResponseDTO();
-                autorDTO.setId(avaliacao.getLivro().getAutor().getId());
-                autorDTO.setNome(avaliacao.getLivro().getAutor().getNome());
-                livroDTO.setAutor(autorDTO);
+                livroDTO.setNomeAutor(avaliacao.getLivro().getAutor().getNome());
             }
 
             if (avaliacao.getLivro().getCategoria() != null) {
-                CategoriaResponseDTO categoriaDTO = new CategoriaResponseDTO();
-                categoriaDTO.setId(avaliacao.getLivro().getCategoria().getId());
-                categoriaDTO.setNome(avaliacao.getLivro().getCategoria().getNome());
-                livroDTO.setCategoria(categoriaDTO);
+                livroDTO.setNomeCategoria(avaliacao.getLivro().getCategoria().getNome());
+                livroDTO.setAreaConhecimentoCategoria(avaliacao.getLivro().getCategoria().getAreaConhecimento());
+                livroDTO.setDepartamentoResponsavelCategoria(avaliacao.getLivro().getCategoria().getDepartamentoResponsavel());
             }
 
             responseDTO.setLivro(livroDTO);
